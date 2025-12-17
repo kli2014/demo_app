@@ -1,0 +1,260 @@
+# Security Policy Configuration for Copilot Agent
+
+name: security-copilot
+version: 1.0.0
+description: Security-focused copilot agent for Rails application security
+
+# Agent metadata
+metadata:
+  author: Demo App Team
+  created: "2025-12-17"
+  type: security
+  framework: rails
+  framework_version: 4.0.2
+
+# Agent capabilities
+capabilities:
+  - code-review
+  - vulnerability-detection
+  - security-best-practices
+  - compliance-checking
+  - secure-coding-guidance
+
+# Security focus areas
+focus_areas:
+  authentication:
+    - session management
+    - password security
+    - token handling
+    
+  authorization:
+    - access control
+    - role-based permissions
+    - resource-level authorization
+    
+  input_validation:
+    - strong parameters
+    - model validations
+    - data sanitization
+    - file upload security
+    
+  output_security:
+    - XSS prevention
+    - HTML escaping
+    - JSON security
+    - template security
+    
+  database_security:
+    - SQL injection prevention
+    - parameterized queries
+    - secure migrations
+    - data encryption
+    
+  api_security:
+    - rate limiting
+    - API authentication
+    - CORS configuration
+    - secure endpoints
+    
+  configuration:
+    - security headers
+    - HTTPS enforcement
+    - cookie security
+    - environment variables
+
+# Vulnerability patterns to detect
+vulnerability_patterns:
+  sql_injection:
+    severity: critical
+    patterns:
+      - 'where(".*#{'
+      - 'find_by_sql(".*#{'
+    message: "Potential SQL injection vulnerability detected"
+    
+  xss:
+    severity: high
+    patterns:
+      - ".html_safe"
+      - "raw @"
+      - "raw("
+    message: "Potential XSS vulnerability detected"
+    
+  mass_assignment:
+    severity: critical
+    patterns:
+      - ".new(params["
+      - ".create(params["
+      - ".update(params["
+    message: "Mass assignment vulnerability detected"
+    
+  csrf_bypass:
+    severity: high
+    patterns:
+      - "skip_before_action :verify_authenticity_token"
+      - "protect_from_forgery with: :null_session"
+    message: "CSRF protection may be bypassed"
+    
+  insecure_redirect:
+    severity: medium
+    patterns:
+      - "redirect_to params["
+      - "redirect_to request.params"
+    message: "Unvalidated redirect detected"
+    
+  command_injection:
+    severity: critical
+    patterns:
+      - "`.*params"
+      - "system(.*params"
+      - "exec(.*params"
+    message: "Command injection risk detected"
+
+# Security rules enforcement
+rules:
+  - id: strong-parameters
+    description: "Use strong parameters for mass assignment"
+    severity: high
+    enabled: true
+    
+  - id: input-validation
+    description: "Validate all user input at model level"
+    severity: high
+    enabled: true
+    
+  - id: authorization-checks
+    description: "Implement authorization for sensitive actions"
+    severity: critical
+    enabled: true
+    
+  - id: csrf-protection
+    description: "Ensure CSRF protection is enabled"
+    severity: high
+    enabled: true
+    
+  - id: xss-prevention
+    description: "Prevent XSS through proper output escaping"
+    severity: high
+    enabled: true
+    
+  - id: sql-injection-prevention
+    description: "Use parameterized queries to prevent SQL injection"
+    severity: critical
+    enabled: true
+    
+  - id: secure-headers
+    description: "Configure security headers in production"
+    severity: medium
+    enabled: true
+    
+  - id: https-enforcement
+    description: "Enforce HTTPS in production"
+    severity: high
+    enabled: true
+
+# Code review guidelines
+review_guidelines:
+  pull_request:
+    - Check for security vulnerabilities
+    - Verify input validation
+    - Ensure authorization is implemented
+    - Review for common security anti-patterns
+    - Validate secure coding practices
+    
+  commit:
+    - Scan for accidentally committed secrets
+    - Check for security regressions
+    - Verify security best practices
+    
+  dependencies:
+    - Check for known vulnerabilities
+    - Verify dependency versions
+    - Recommend security updates
+
+# Recommended security tools
+recommended_tools:
+  static_analysis:
+    - name: brakeman
+      description: "Static security analysis for Rails"
+      command: "brakeman -A"
+      
+    - name: bundler-audit
+      description: "Check for vulnerable dependencies"
+      command: "bundle audit check --update"
+      
+    - name: rubocop-security
+      description: "Security cops for RuboCop"
+      
+  runtime_protection:
+    - name: rack-attack
+      description: "Rack middleware for throttling & blocking"
+      
+    - name: secure_headers
+      description: "Security header configuration"
+      
+  authentication:
+    - name: devise
+      description: "Flexible authentication solution"
+      
+  authorization:
+    - name: pundit
+      description: "Minimal authorization through OO design"
+      
+    - name: cancancan
+      description: "Authorization library"
+
+# Security checklist templates
+checklists:
+  code_review:
+    - Strong parameters used for all mass assignment
+    - User input validated at model level
+    - Authorization implemented for sensitive actions
+    - No SQL injection vulnerabilities
+    - XSS prevention measures in place
+    - CSRF protection enabled
+    - Sensitive data not logged or exposed
+    - Security headers configured
+    - Dependencies up to date
+    - Secrets stored securely
+    
+  deployment:
+    - HTTPS enforced in production
+    - Security headers configured
+    - Database credentials secured
+    - API keys in environment variables
+    - Error pages don't expose sensitive info
+    - Logging configured properly
+    - Backups encrypted
+    - Rate limiting configured
+
+# Compliance frameworks
+compliance:
+  owasp_top_10:
+    - A1:2017-Injection
+    - A2:2017-Broken Authentication
+    - A3:2017-Sensitive Data Exposure
+    - A4:2017-XML External Entities (XXE)
+    - A5:2017-Broken Access Control
+    - A6:2017-Security Misconfiguration
+    - A7:2017-Cross-Site Scripting (XSS)
+    - A8:2017-Insecure Deserialization
+    - A9:2017-Using Components with Known Vulnerabilities
+    - A10:2017-Insufficient Logging & Monitoring
+
+# Educational resources
+resources:
+  documentation:
+    - title: "Rails Security Guide"
+      url: "https://guides.rubyonrails.org/security.html"
+      
+    - title: "OWASP Top 10"
+      url: "https://owasp.org/www-project-top-ten/"
+      
+    - title: "Rails Security Checklist"
+      url: "https://github.com/eliotsykes/rails-security-checklist"
+      
+  tools:
+    - title: "Brakeman Scanner"
+      url: "https://brakemanscanner.org/"
+      
+    - title: "bundler-audit"
+      url: "https://github.com/rubysec/bundler-audit"
