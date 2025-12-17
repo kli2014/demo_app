@@ -7,7 +7,7 @@ description: Security-focused copilot agent for Rails application security
 # Agent metadata
 metadata:
   author: Demo App Team
-  created: 2025-12-17
+  created: "2025-12-17"
   type: security
   framework: rails
   framework_version: 4.0.2
@@ -67,8 +67,8 @@ vulnerability_patterns:
   sql_injection:
     severity: critical
     patterns:
-      - "where(\".*#{"
-      - "find_by_sql(\".*#{"
+      - 'where(".*#{'
+      - 'find_by_sql(".*#{'
     message: "Potential SQL injection vulnerability detected"
     
   xss:

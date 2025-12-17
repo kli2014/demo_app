@@ -10,7 +10,7 @@ require 'pathname'
 class SecurityScanner
   SECURITY_PATTERNS = {
     sql_injection: {
-      pattern: /\.where\(['"]/,
+      pattern: /\.where\s*\(\s*["'].*#\{|\.find_by_sql\s*\(\s*["'].*#\{/,
       severity: 'HIGH',
       description: 'Potential SQL injection - use parameterized queries',
       example: 'Use: where(name: value) instead of where("name = \'#{value}\'")'
@@ -128,7 +128,7 @@ class SecurityScanner
     prod_config = 'config/environments/production.rb'
     if File.exist?(prod_config)
       content = File.read(prod_config)
-      unless content.include?('config.force_ssl = true')
+      unless content =~ /config\.force_ssl\s*=\s*true/
         @findings << {
           file: prod_config,
           line: 0,
@@ -145,7 +145,7 @@ class SecurityScanner
     app_controller = 'app/controllers/application_controller.rb'
     if File.exist?(app_controller)
       content = File.read(app_controller)
-      if content.include?('protect_from_forgery') && content.include?('with: :null_session')
+      if content =~ /protect_from_forgery.*with:\s*:null_session/
         @findings << {
           file: app_controller,
           line: 0,
