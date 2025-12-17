@@ -1,28 +1,34 @@
 == README
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+This is a Ruby on Rails demo application with user and micropost functionality.
 
-Things you may want to cover:
+* Ruby version: 1.9.3
+* Rails version: 4.0.2
 
-* Ruby version
+== Security Copilot Agent
 
-* System dependencies
+This application includes a Security Copilot Agent to help maintain security best practices.
 
-* Configuration
+* Documentation: .github/agents/README.md
+* Agent Configuration: .github/agents/security-copilot.md
+* Quick Reference: .github/agents/QUICK_REFERENCE.md
+* Security Scanner: ruby .github/agents/security_scan.rb
 
-* Database creation
+The Security Copilot Agent provides:
+* Automated security code reviews
+* Vulnerability detection
+* Secure coding best practices
+* Rails-specific security patterns
+* OWASP compliance guidance
 
-* Database initialization
+For security questions or code reviews, consult the Security Copilot Agent documentation.
 
-* How to run the test suite
+== Getting Started
 
-* Services (job queues, cache servers, search engines, etc.)
-
-* Deployment instructions
-
-* ...
-
+* Database creation: rake db:create
+* Database initialization: rake db:migrate
+* How to run the test suite: rake test
+* Security scan: ruby .github/agents/security_scan.rb
 
 Please feel free to use a different markup language if you do not plan to run
 <tt>rake doc:app</tt>.

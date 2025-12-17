@@ -1,0 +1,58 @@
+name: Security Copilot Analysis
+
+on:
+  pull_request:
+    branches: [ main, master ]
+  push:
+    branches: [ main, master ]
+  workflow_dispatch:
+
+jobs:
+  security-scan:
+    name: Security Analysis
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '2.7'
+          bundler-cache: true
+          
+      - name: Run Security Copilot Scanner
+        run: |
+          echo "🔍 Running Security Copilot Analysis..."
+          ruby .github/agents/security_scan.rb
+          
+      - name: Install Brakeman
+        run: gem install brakeman
+        
+      - name: Run Brakeman Security Scan
+        run: |
+          echo "🔍 Running Brakeman Static Analysis..."
+          brakeman -A -f plain || true
+          
+      - name: Install bundler-audit
+        run: gem install bundler-audit
+        
+      - name: Check for vulnerable dependencies
+        run: |
+          echo "🔍 Checking for vulnerable dependencies..."
+          bundle audit check --update || true
+          
+      - name: Security Summary
+        run: |
+          echo "✅ Security analysis complete!"
+          echo ""
+          echo "📋 Security Checklist:"
+          echo "  - Review security scan results above"
+          echo "  - Address any CRITICAL or HIGH severity issues"
+          echo "  - Update vulnerable dependencies if found"
+          echo "  - Consult Security Copilot Agent for remediation guidance"
+          echo ""
+          echo "💡 For security guidance, refer to:"
+          echo "  - .github/agents/security-copilot.md"
+          echo "  - .github/agents/README.md"
