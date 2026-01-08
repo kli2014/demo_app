@@ -3,11 +3,14 @@ class Subscription < ActiveRecord::Base
 
   belongs_to :user
   belongs_to :product
+  # Note: In Rails 4, belongs_to associations are optional by default.
+  # Main subscriptions have nil parent_subscription_id.
   belongs_to :parent_subscription, class_name: 'Subscription'
   has_many :child_subscriptions, class_name: 'Subscription', foreign_key: :parent_subscription_id
 
   validates :status, inclusion: { in: STATUSES }
 
+  # Serializing config_data as Hash for storing contact information and other configuration
   serialize :config_data, Hash
 
   scope :by_status, ->(status) { where(status: status) if status.present? }

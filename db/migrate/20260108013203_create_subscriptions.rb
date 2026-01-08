@@ -12,6 +12,8 @@ class CreateSubscriptions < ActiveRecord::Migration
       t.timestamps
     end
 
+    add_foreign_key :subscriptions, :users
+    add_foreign_key :subscriptions, :products
     add_foreign_key :subscriptions, :subscriptions, column: :parent_subscription_id
   end
 end

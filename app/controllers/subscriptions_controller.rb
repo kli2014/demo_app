@@ -80,9 +80,11 @@ class SubscriptionsController < ApplicationController
   end
 
   def subscription_params
-    params.require(:subscription).permit(:config_data, config_data: [:contact_name, :contact_email, :contact_phone])
-  rescue ActionController::ParameterMissing
-    {}
+    if params[:subscription].present?
+      params.require(:subscription).permit(:config_data, config_data: [:contact_name, :contact_email, :contact_phone])
+    else
+      {}
+    end
   end
 
   def current_user
