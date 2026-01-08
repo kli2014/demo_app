@@ -1,14 +1,33 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>DemoApp</title>
+  <title>Security Store - DemoApp</title>
   <%= stylesheet_link_tag    "application", media: "all", "data-turbolinks-track" => true %>
   <%= javascript_include_tag "application", "data-turbolinks-track" => true %>
   <%= csrf_meta_tags %>
 </head>
 <body>
+  <nav class="nav-bar">
+    <div style="display: flex; align-items: center;">
+      <span class="nav-brand">Microsoft Security</span>
+      <%= link_to 'Store', store_path %>
+      <%= link_to 'My Solutions', solutions_path %>
+    </div>
+    <div>
+      <%= link_to 'Users', users_path %>
+    </div>
+  </nav>
 
-<%= yield %>
+<div class="container">
+  <% if notice %>
+    <div class="alert alert-success"><%= notice %></div>
+  <% end %>
+  <% if alert %>
+    <div class="alert alert-danger"><%= alert %></div>
+  <% end %>
+  
+  <%= yield %>
+</div>
 
 </body>
 </html>

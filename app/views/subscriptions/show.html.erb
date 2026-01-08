@@ -1,0 +1,113 @@
+<div class="back-link-container">
+  <%= link_to '← Back to My Solutions', solutions_path, class: 'back-link' %>
+</div>
+
+<h1>Editing offer: <%= @subscription.product.name %></h1>
+<p>Deployment status and configuration for your subscription.</p>
+
+<div class="two-column">
+  <div>
+    <div class="card">
+      <div class="card-header">
+        <h2 class="card-title">Deployment Progress</h2>
+      </div>
+
+      <% @related_subscriptions.each do |sub| %>
+        <div class="deployment-item <%= sub.status %>">
+          <div class="status-indicator">
+            <% case sub.status %>
+            <% when 'deployed' %>
+              <span class="check">✓</span>
+            <% when 'failed', 'action_required' %>
+              <span class="warning">⚠</span>
+            <% when 'pending', 'deploying' %>
+              <span class="pending-icon">◐</span>
+            <% else %>
+              <span class="pending-icon">○</span>
+            <% end %>
+          </div>
+          <div style="flex: 1;">
+            <div style="font-weight: 600;"><%= sub.product.name %></div>
+            <div style="font-size: 12px; color: #605e5c;"><%= sub.product.product_type %></div>
+            <% if sub.error_message.present? %>
+              <div style="font-size: 12px; color: #d13438; margin-top: 5px;"><%= sub.error_message %></div>
+            <% end %>
+          </div>
+          <% if sub.status == 'deployed' && sub.product.cta_text.present? %>
+            <a href="#" class="cta-link"><%= sub.product.cta_text %></a>
+          <% elsif sub.requires_action? %>
+            <%= link_to 'Skip', '#', class: 'btn btn-secondary', style: 'font-size: 12px; padding: 4px 10px;' %>
+          <% end %>
+        </div>
+
+        <% if sub.requires_action? %>
+          <div class="tip-box">
+            <p>💡 <strong>Tip:</strong> You can skip this component and continue. Failed deployments can be retried later from <%= link_to 'My Solutions', solutions_path %>.</p>
+          </div>
+        <% end %>
+      <% end %>
+    </div>
+
+    <% if @subscription.deployment_complete? && !@subscription.has_failures? %>
+      <div class="alert alert-success">
+        <strong>Deployment Complete!</strong>
+        <p style="margin: 5px 0 0 0;">All components have been successfully deployed.</p>
+      </div>
+    <% end %>
+
+    <% if @subscription.has_failures? %>
+      <div class="alert alert-warning">
+        <strong>Some components require attention</strong>
+        <p style="margin: 5px 0 0 0;">One or more components failed to deploy. You can retry or skip them.</p>
+      </div>
+    <% end %>
+
+    <div style="margin-top: 20px;">
+      <%= link_to 'Manage in my solutions', solutions_path, class: 'btn btn-primary' %>
+      <%= link_to 'Remove subscription', subscription_path(@subscription), method: :delete, data: { confirm: 'Are you sure?' }, class: 'btn btn-danger' %>
+    </div>
+  </div>
+
+  <div>
+    <div class="sidebar">
+      <h3>Subscription Summary</h3>
+      
+      <div style="display: flex; align-items: center; margin-bottom: 20px;">
+        <div style="width: 48px; height: 48px; background: linear-gradient(135deg, #0078d4, #50e6ff); border-radius: 8px; margin-right: 15px; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold;">
+          <%= @subscription.product.name.first(2).upcase %>
+        </div>
+        <div>
+          <div style="font-weight: 600;"><%= @subscription.product.name %></div>
+          <div style="font-size: 12px; color: #605e5c;"><%= @subscription.product.publisher&.name %></div>
+        </div>
+      </div>
+
+      <div class="sidebar-section">
+        <h3>Status</h3>
+        <p>
+          <% deployed_count = @related_subscriptions.count { |s| s.status == 'deployed' } %>
+          <% total_count = @related_subscriptions.count %>
+          <%= deployed_count %> of <%= total_count %> components deployed
+        </p>
+      </div>
+
+      <% if @subscription.config_data.present? && @subscription.config_data.any? %>
+        <div class="sidebar-section">
+          <h3>Configuration</h3>
+          <% @subscription.config_data.each do |key, value| %>
+            <% if value.present? %>
+              <p style="font-size: 13px; margin: 5px 0;">
+                <strong><%= key.to_s.humanize %>:</strong> <%= value %>
+              </p>
+            <% end %>
+          <% end %>
+        </div>
+      <% end %>
+
+      <div class="sidebar-section">
+        <h3>Subscribed on</h3>
+        <p style="font-size: 13px;"><%= @subscription.created_at.strftime('%B %d, %Y at %I:%M %p') %></p>
+      </div>
+    </div>
+  </div>
+</div>

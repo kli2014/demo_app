@@ -1,0 +1,105 @@
+<div class="card" style="padding: 0;">
+  <div class="product-hero">
+    <div style="display: flex; align-items: center;">
+      <div style="width: 64px; height: 64px; background: rgba(255,255,255,0.2); border-radius: 8px; margin-right: 20px; display: flex; align-items: center; justify-content: center; font-size: 24px; font-weight: bold;">
+        <%= @product.name.first(2).upcase %>
+      </div>
+      <div>
+        <h1><%= @product.name %></h1>
+        <p class="publisher">By <%= @product.publisher&.name %></p>
+      </div>
+    </div>
+  </div>
+
+  <div style="padding: 0 20px 20px 20px;">
+    <div class="product-tabs">
+      <a href="#overview" class="active">Overview</a>
+      <a href="#pricing">Plans + pricing</a>
+      <a href="#details">Details</a>
+    </div>
+
+    <div class="two-column">
+      <div>
+        <h2>Overview</h2>
+        <p><%= @product.overview || @product.description %></p>
+
+        <% if @product.screenshots.present? %>
+          <h3>Screenshots</h3>
+          <div style="display: flex; gap: 10px; overflow-x: auto;">
+            <% @product.screenshots.each do |screenshot| %>
+              <div style="width: 300px; height: 200px; background: #f3f2f1; border-radius: 4px; flex-shrink: 0;"></div>
+            <% end %>
+          </div>
+        <% end %>
+
+        <% if @complementary_products.any? %>
+          <h3 style="margin-top: 30px;">Complementary Products</h3>
+          <p style="color: #605e5c; font-size: 14px;">These products work well with <%= @product.name %></p>
+          <div style="display: flex; gap: 15px; overflow-x: auto; padding-bottom: 10px;">
+            <% @complementary_products.each do |comp| %>
+              <%= link_to store_product_path(comp), style: 'text-decoration: none;' do %>
+                <div style="width: 250px; flex-shrink: 0; background: white; border: 1px solid #e5e5e5; border-radius: 8px; padding: 15px;">
+                  <div style="display: flex; align-items: center; margin-bottom: 10px;">
+                    <div style="width: 32px; height: 32px; background: linear-gradient(135deg, #0078d4, #50e6ff); border-radius: 4px; margin-right: 10px; display: flex; align-items: center; justify-content: center; color: white; font-size: 12px;"><%= comp.name.first(2).upcase %></div>
+                    <div>
+                      <div style="font-weight: 600; font-size: 14px; color: #323130;"><%= comp.name %></div>
+                      <div style="font-size: 11px; color: #605e5c;"><%= comp.publisher&.name %></div>
+                    </div>
+                  </div>
+                  <p style="font-size: 13px; color: #605e5c; margin: 0 0 10px 0;"><%= truncate(comp.description, length: 80) %></p>
+                  <span class="badge badge-<%= comp.product_type.downcase %>"><%= comp.product_type %></span>
+                </div>
+              <% end %>
+            <% end %>
+          </div>
+        <% end %>
+      </div>
+
+      <div class="sidebar">
+        <%= link_to 'Get it now', new_subscription_path(product_id: @product.id), class: 'btn btn-primary', style: 'width: 100%; text-align: center; display: block; margin-bottom: 20px;' %>
+
+        <% if @microsoft_products.any? %>
+          <div class="sidebar-section">
+            <h3>Microsoft products you need</h3>
+            <p style="font-size: 12px; color: #605e5c; margin-bottom: 10px;">These Microsoft products are required to use <%= @product.name %></p>
+            <% @microsoft_products.each do |mp| %>
+              <div class="sidebar-item">
+                <div class="icon">M</div>
+                <div class="name"><%= mp.name %></div>
+                <span class="chevron">›</span>
+              </div>
+            <% end %>
+          </div>
+        <% end %>
+
+        <% if @partner_products.any? %>
+          <div class="sidebar-section">
+            <h3>Other products you need</h3>
+            <p style="font-size: 12px; color: #605e5c; margin-bottom: 10px;">These partner products are required</p>
+            <% @partner_products.each do |pp| %>
+              <div class="sidebar-item">
+                <div class="icon"><%= pp.name.first(1) %></div>
+                <div>
+                  <div class="name"><%= pp.name %></div>
+                  <div class="price"><%= pp.price_display %></div>
+                </div>
+                <span class="chevron">›</span>
+              </div>
+            <% end %>
+          </div>
+        <% end %>
+
+        <% if @product.permissions.present? %>
+          <div class="sidebar-section">
+            <h3>Permissions required</h3>
+            <ul style="margin: 0; padding-left: 20px; font-size: 13px;">
+              <% @product.permissions.each do |permission| %>
+                <li><%= permission %></li>
+              <% end %>
+            </ul>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>

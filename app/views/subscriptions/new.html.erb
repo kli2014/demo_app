@@ -1,0 +1,139 @@
+<div class="back-link-container">
+  <%= link_to '← Back to My Solutions', solutions_path, class: 'back-link' %>
+</div>
+
+<h1>Subscribe to <%= @product.name %></h1>
+<p>Configure and deploy this solution to your environment.</p>
+
+<%= form_tag subscriptions_path(product_id: @product.id), method: :post do %>
+
+  <div class="two-column">
+    <div>
+      <!-- Microsoft Products (Info Only) -->
+      <% if @microsoft_products.any? %>
+        <div class="card">
+          <div class="card-header">
+            <h2 class="card-title">Microsoft products required</h2>
+          </div>
+          <p style="color: #605e5c; font-size: 14px;">These Microsoft products are required to use <%= @product.name %>. You cannot deploy these from here.</p>
+          
+          <% @microsoft_products.each do |mp| %>
+            <div class="deployment-item">
+              <div class="status-indicator">
+                <% if @available_microsoft_products[mp.id] %>
+                  <span class="check">✓</span>
+                <% else %>
+                  <span class="error">✗</span>
+                <% end %>
+              </div>
+              <div style="flex: 1;">
+                <div style="font-weight: 600;"><%= mp.name %></div>
+                <div class="availability <%= @available_microsoft_products[mp.id] ? 'available' : 'unavailable' %>">
+                  <% if @available_microsoft_products[mp.id] %>
+                    Available in your environment
+                  <% else %>
+                    Not detected - <a href="<%= mp.external_url || '#' %>" target="_blank">Get it here</a>
+                  <% end %>
+                </div>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      <% end %>
+
+      <!-- Partner Products to Deploy -->
+      <% if @partner_products.any? %>
+        <div class="card">
+          <div class="card-header">
+            <h2 class="card-title">Partner products to deploy</h2>
+          </div>
+          <p style="color: #605e5c; font-size: 14px;">These required products will be deployed with <%= @product.name %>.</p>
+          
+          <% @partner_products.each do |pp| %>
+            <div class="checkbox-item">
+              <input type="checkbox" name="selected_products[]" value="<%= pp.id %>" checked id="product_<%= pp.id %>">
+              <label for="product_<%= pp.id %>" class="info" style="cursor: pointer;">
+                <div style="font-weight: 600;"><%= pp.name %></div>
+                <div style="font-size: 12px; color: #605e5c;"><%= pp.price_display %></div>
+              </label>
+            </div>
+          <% end %>
+        </div>
+      <% end %>
+
+      <!-- Complementary Products (Optional) -->
+      <% if @complementary_products.any? %>
+        <div class="card">
+          <div class="card-header">
+            <h2 class="card-title">Complementary products</h2>
+          </div>
+          <p style="color: #605e5c; font-size: 14px;">Optional products that enhance your experience.</p>
+          
+          <% @complementary_products.each do |cp| %>
+            <div class="checkbox-item">
+              <input type="checkbox" name="selected_products[]" value="<%= cp.id %>" id="product_<%= cp.id %>">
+              <label for="product_<%= cp.id %>" class="info" style="cursor: pointer;">
+                <div style="font-weight: 600;"><%= cp.name %></div>
+                <div style="font-size: 12px; color: #605e5c;"><%= cp.price_display %></div>
+              </label>
+            </div>
+          <% end %>
+        </div>
+      <% end %>
+
+      <!-- Configuration (if needed) -->
+      <div class="card">
+        <div class="card-header">
+          <h2 class="card-title">Configuration</h2>
+        </div>
+        <p style="color: #605e5c; font-size: 14px;">Provide contact information for the Managed XDR Service.</p>
+        
+        <div class="form-group">
+          <label for="contact_name">Contact Name</label>
+          <input type="text" name="subscription[config_data][contact_name]" id="contact_name" placeholder="Your name">
+        </div>
+        
+        <div class="form-group">
+          <label for="contact_email">Contact Email</label>
+          <input type="email" name="subscription[config_data][contact_email]" id="contact_email" placeholder="your.email@company.com">
+        </div>
+        
+        <div class="form-group">
+          <label for="contact_phone">Contact Phone</label>
+          <input type="tel" name="subscription[config_data][contact_phone]" id="contact_phone" placeholder="+1 (555) 123-4567">
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <div class="sidebar">
+        <h3>You're subscribing to</h3>
+        
+        <div style="display: flex; align-items: center; margin-bottom: 20px;">
+          <div style="width: 48px; height: 48px; background: linear-gradient(135deg, #0078d4, #50e6ff); border-radius: 8px; margin-right: 15px; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold;">
+            <%= @product.name.first(2).upcase %>
+          </div>
+          <div>
+            <div style="font-weight: 600;"><%= @product.name %></div>
+            <div style="font-size: 12px; color: #605e5c;"><%= @product.publisher&.name %></div>
+          </div>
+        </div>
+
+        <div style="border-top: 1px solid #e5e5e5; padding-top: 15px; margin-bottom: 15px;">
+          <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+            <span>Main product</span>
+            <span><%= @product.price_display %></span>
+          </div>
+        </div>
+
+        <button type="submit" class="btn btn-primary" style="width: 100%; text-align: center;">
+          Deploy Now
+        </button>
+        
+        <p style="font-size: 12px; color: #605e5c; margin-top: 15px; text-align: center;">
+          By deploying, you agree to the terms and conditions.
+        </p>
+      </div>
+    </div>
+  </div>
+<% end %>
