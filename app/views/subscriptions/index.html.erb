@@ -1,0 +1,79 @@
+<h1>My Solutions</h1>
+<p>Manage your deployed security solutions, grouped by publisher.</p>
+
+<% if @subscriptions_by_publisher.any? %>
+  <% @subscriptions_by_publisher.each do |publisher, subscriptions| %>
+    <div class="publisher-group">
+      <div class="publisher-header">
+        <div class="publisher-logo"><%= publisher&.name&.first(2)&.upcase || '?' %></div>
+        <div class="publisher-name"><%= publisher&.name || 'Unknown Publisher' %></div>
+      </div>
+
+      <div class="subscription-list">
+        <% subscriptions.each do |subscription| %>
+          <div class="subscription-item">
+            <div class="icon"><%= subscription.product.name.first(2).upcase %></div>
+            <div class="info">
+              <div class="name"><%= subscription.product.name %></div>
+              <div class="type"><%= subscription.product.product_type %></div>
+              <% if subscription.has_failures? %>
+                <div class="alert alert-warning" style="margin: 10px 0 0 0; padding: 8px 12px;">
+                  <strong>Action Required</strong>
+                  <p style="margin: 5px 0 0 0; font-size: 13px;"><%= subscription.error_message || 'Some components require your attention.' %></p>
+                </div>
+              <% end %>
+            </div>
+            <div class="actions">
+              <% case subscription.status %>
+              <% when 'deployed' %>
+                <span class="badge badge-deployed">✓ Deployed</span>
+              <% when 'failed' %>
+                <span class="badge badge-failed">✗ Failed</span>
+              <% when 'action_required' %>
+                <span class="badge badge-action">⚠ Action Required</span>
+              <% when 'pending' %>
+                <span class="badge badge-pending">◐ Pending</span>
+              <% else %>
+                <span class="badge"><%= subscription.status.humanize %></span>
+              <% end %>
+              
+              <%= link_to 'View Details', subscription_path(subscription), class: 'btn btn-secondary' %>
+              
+              <% if subscription.requires_action? %>
+                <%= link_to 'Resume Deployment', retry_deployment_subscription_path(subscription), method: :post, class: 'btn btn-primary' %>
+              <% end %>
+            </div>
+          </div>
+
+          <% subscription.child_subscriptions.each do |child| %>
+            <div class="subscription-item" style="margin-left: 30px; border-left: 3px solid #e5e5e5;">
+              <div class="icon" style="width: 36px; height: 36px; font-size: 14px;"><%= child.product.name.first(2).upcase %></div>
+              <div class="info">
+                <div class="name" style="font-size: 14px;"><%= child.product.name %></div>
+                <div class="type"><%= child.product.product_type %></div>
+                <% if child.requires_action? %>
+                  <div style="font-size: 12px; color: #d13438; margin-top: 5px;"><%= child.error_message %></div>
+                <% end %>
+              </div>
+              <div class="actions">
+                <% case child.status %>
+                <% when 'deployed' %>
+                  <span class="badge badge-deployed">✓ Deployed</span>
+                <% when 'failed', 'action_required' %>
+                  <span class="badge badge-action">⚠ Action Required</span>
+                <% else %>
+                  <span class="badge badge-pending"><%= child.status.humanize %></span>
+                <% end %>
+              </div>
+            </div>
+          <% end %>
+        <% end %>
+      </div>
+    </div>
+  <% end %>
+<% else %>
+  <div class="card">
+    <p>You haven't subscribed to any solutions yet.</p>
+    <%= link_to 'Browse the Security Store', store_path, class: 'btn btn-primary' %>
+  </div>
+<% end %>

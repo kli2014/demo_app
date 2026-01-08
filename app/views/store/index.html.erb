@@ -1,0 +1,36 @@
+<h1>Security Store</h1>
+<p>Browse security software solutions, agents, connectors, and services.</p>
+
+<div class="filters">
+  <%= link_to 'All', store_path, class: "filter-btn #{params[:type].blank? ? 'active' : ''}" %>
+  <% @product_types.each do |type| %>
+    <%= link_to type, store_path(type: type), class: "filter-btn #{params[:type] == type ? 'active' : ''}" %>
+  <% end %>
+</div>
+
+<div class="products-grid">
+  <% if @products.any? %>
+    <% @products.each do |product| %>
+      <%= link_to store_product_path(product), style: 'text-decoration: none; color: inherit;' do %>
+        <div class="product-card">
+          <div class="product-card-image">
+            <span class="icon"><%= product.name.first(2).upcase %></span>
+          </div>
+          <div class="product-card-body">
+            <h3 class="product-card-title"><%= product.name %></h3>
+            <p class="product-card-publisher"><%= product.publisher&.name %></p>
+            <p class="product-card-description"><%= truncate(product.description, length: 100) %></p>
+            <div>
+              <span class="badge badge-<%= product.product_type.downcase %>"><%= product.product_type %></span>
+              <span class="badge badge-<%= product.price_model.downcase == 'free' ? 'free' : 'paid' %>"><%= product.price_display %></span>
+            </div>
+          </div>
+        </div>
+      <% end %>
+    <% end %>
+  <% else %>
+    <div class="card">
+      <p>No products found. <% if params[:type].present? %><%= link_to 'Clear filter', store_path %><% end %></p>
+    </div>
+  <% end %>
+</div>

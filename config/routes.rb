@@ -3,6 +3,19 @@ DemoApp::Application.routes.draw do
 
   resources :users
 
+  # Security Store routes
+  get 'store', to: 'store#index', as: :store
+  get 'store/:id', to: 'store#show', as: :store_product
+  get 'store/:product_id/subscribe', to: 'subscriptions#new', as: :new_subscription
+  
+  resources :subscriptions, only: [:show, :create, :destroy] do
+    member do
+      post :retry_deployment
+    end
+  end
+  
+  get 'solutions', to: 'subscriptions#index', as: :solutions
+
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
 
